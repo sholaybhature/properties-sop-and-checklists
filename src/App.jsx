@@ -35,8 +35,6 @@ const CHECKLISTS = {
           "Floor mopping done",
           "Room freshener done",
           "AC remote + TV remote present & working",
-          "Geyser working",
-          "WiFi card placed",
         ],
       },
       {
