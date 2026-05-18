@@ -174,6 +174,20 @@ export default function SOPApp() {
     setScreen("sops");
   };
 
+  const KITCHEN_ROOMS = ["301", "302", "401", "402"];
+  const getEffectiveSections = () => {
+    if (!selectedSOP) return [];
+    const sections = [...CHECKLISTS[selectedSOP].sections];
+    if (selectedSOP === "room-ready" && property === "Subah-e-Banaras" && KITCHEN_ROOMS.includes(roomNo)) {
+      sections.push({
+        title: "Kitchen",
+        color: "#e67e22",
+        items: ["Dustbin empty", "Utensils cleaned", "Kitchen clean"],
+      });
+    }
+    return sections;
+  };
+
   const toggleCheck = (sIdx, iIdx) => {
     const key = `${sIdx}-${iIdx}`;
     setChecks((p) => ({ ...p, [key]: !p[key] }));
@@ -181,7 +195,7 @@ export default function SOPApp() {
 
   const getTotalItems = () => {
     if (!selectedSOP) return 0;
-    return CHECKLISTS[selectedSOP].sections.reduce((s, sec) => s + sec.items.length, 0);
+    return getEffectiveSections().reduce((s, sec) => s + sec.items.length, 0);
   };
 
   const getCheckedCount = () => Object.values(checks).filter(Boolean).length;
@@ -196,7 +210,7 @@ export default function SOPApp() {
     if (sop.needsRoom && roomNo) msg += ` - ${roomNo}`;
     msg += `\n\n`;
 
-    sop.sections.forEach((section, sIdx) => {
+    getEffectiveSections().forEach((section, sIdx) => {
       msg += `*${section.title}*\n`;
       section.items.forEach((item, iIdx) => {
         const c = checks[`${sIdx}-${iIdx}`];
@@ -371,7 +385,7 @@ export default function SOPApp() {
         </div>
 
         {/* Sections */}
-        {sop.sections.map((section, sIdx) => (
+        {getEffectiveSections().map((section, sIdx) => (
           <div key={sIdx} style={{ marginTop: "16px" }}>
             <div style={{
               margin: "0 18px", padding: "10px 16px", background: section.color,
